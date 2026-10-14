@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concigra — Conciliación de operaciones agrícolas</title>
+<meta name="description" content="Concigra es una plataforma independiente para la conciliación de operaciones agrícolas: conectá tus fuentes, detectá diferencias y obtené un registro conciliado de cada operación.">
+<meta property="og:title" content="Concigra — Conciliá tus operaciones agrícolas">
+<meta property="og:description" content="Una operación. Múltiples fuentes. Un registro conciliado.">
+<meta name="theme-color" content="#16211B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cpath d='M4 8h12M4 14h16M4 20h12' stroke='%2316211B' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='22' cy='14' r='4' fill='%231F6B45'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap">
+<style>
+body{margin:0;background:#F6F4EE;color:#16211B;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#1F6B45}a:hover{color:#134A2F}
+h1,h2,h3{font-family:'Archivo',sans-serif;margin:0;letter-spacing:-0.02em;line-height:1.08}
+p{margin:0}
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px;width:100%}
+.view{min-height:calc(100vh - 182px);display:flex;align-items:center;padding:56px 0;animation:fadein .35s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.view{animation:none}}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#4E5A52;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:24px;height:2px;background:currentColor}
+.h2{font-size:clamp(28px,3.6vw,48px);font-weight:700;max-width:860px}
+.lead{font-size:clamp(17px,1.6vw,20px);color:#3C4840;max-width:720px}
+.mono{font-family:'IBM Plex Mono',monospace}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 24px;border-radius:999px;background:#1F6B45;color:#fff;font-weight:600;font-size:16px;text-decoration:none;border:0;cursor:pointer;font-family:inherit}
+.btn:hover{background:#134A2F;color:#fff}
+.btn-ghost{background:transparent;color:#16211B;border:1.5px solid #16211B}
+.btn-ghost:hover{background:#16211B;color:#F6F4EE}
+.btn:disabled{opacity:.35;cursor:default}
+.card{background:#fff;border:1px solid #DDD9CE;border-radius:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:48px;align-items:start}
+.span2{grid-column:span 2}
+.full{grid-column:1 / -1}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.amber{color:#8A5200}.green{color:#1F6B45}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;font-size:14px;font-weight:600}
+.dark{background:#16211B;color:#F1EFE8}
+.dark .eyebrow{color:#A9B5AC}
+.dark .lead{color:#C7D0C9}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label,.fs legend{font-size:14px;font-weight:600}
+.field input,.field textarea{font:inherit;font-size:16px;padding:12px 14px;border:1.5px solid #CFCBBF;border-radius:10px;background:#fff;color:#16211B;min-height:46px;width:100%}
+.field input:focus,.field textarea:focus{outline:3px solid #1F6B4555;border-color:#1F6B45}
+.fs{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.chip span{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid #CFCBBF;background:#fff;font-size:15px}
+.chip input:checked+span{background:#16211B;color:#fff;border-color:#16211B}
+.chip input:focus-visible+span{outline:3px solid #1F6B4588}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #ECE9E1}
+.flowstep{display:grid;grid-template-columns:140px 1fr;gap:20px;align-items:center;padding:14px 22px;border-radius:14px;background:#fff;border:1px solid #DDD9CE}
+.arrow{width:2px;height:16px;background:#B9B4A6;margin-left:90px}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:8px 0}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border-radius:999px;border:0;background:transparent;color:#4E5A52;font:inherit;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap}
+.tab:hover{background:#E6E2D7;color:#16211B}
+.tab .n{font-family:'IBM Plex Mono',monospace;font-size:12px;opacity:.7}
+.tab.on{background:#16211B;color:#F6F4EE}
+.tab.on .n{opacity:1;color:#A9D3B9}
+.stick{position:sticky;top:200px}
+.navlabel{display:inline}
+@media (max-width:900px){
+.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid3,.grid2{grid-template-columns:minmax(0,1fr)}
+.grid2{gap:32px}
+.grid3 .span2{grid-column:auto}
+.view{padding:40px 0;align-items:flex-start}
+.flowstep{grid-template-columns:1fr;gap:2px}
+.arrow{margin-left:24px}
+.stick{position:static}
+.hidem{display:none}
+}
+@media (max-width:560px){
+.wrap{padding:0 16px}
+.grid4{grid-template-columns:minmax(0,1fr)}
+.grid4 .span2{grid-column:auto}
+.g2m{grid-template-columns:minmax(0,1fr) !important}
+.navlabel{display:none}
+.card{border-radius:14px}
+.formbox{padding:22px !important}
+}
+</style>
+<style>
+.screen{flex:1;display:flex;flex-direction:column}
+.screen[hidden]{display:none}
+.screen>.view{flex:1}
+</style>
+</head>
+<body>
+<div style="width:100%;min-height:100vh;display:flex;flex-direction:column">
+
+<!-- HEADER + TABS -->
+<header style="position:sticky;top:0;z-index:5;background:#F6F4EEf2;backdrop-filter:blur(8px);border-bottom:1px solid #E2DED3">
+<div class="wrap" style="display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px">
+<button type="button" data-go="0" aria-label="Ir al inicio" style="display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;color:#16211B;min-height:44px">
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M4 8h12M4 14h16M4 20h12" stroke="#16211B" stroke-width="2.4" stroke-linecap="round"/><circle cx="22" cy="14" r="4" fill="#1F6B45"/></svg>
+<span style="font-family:Archivo,sans-serif;font-weight:800;font-size:21px;letter-spacing:-0.02em">Concigra</span>
+</button>
+<button type="button" class="btn" data-go="11" style="min-height:44px;padding:0 18px;font-size:15px">Hablar con Concigra</button>
+</div>
+<div class="wrap">
+<nav class="tabs" id="tabs" aria-label="Secciones">
+
+</nav>
+</div>
+</header>
+
+<main style="flex:1;display:flex;flex-direction:column">
+
+<!-- 1. HERO -->
+<div class="screen" data-i="0">
+<section class="view">
+<div class="wrap" style="display:flex;flex-direction:column;gap:48px">
+<div class="grid2" style="align-items:center">
+<div style="display:flex;flex-direction:column;gap:24px">
+<div class="eyebrow">Conciliación de operaciones agrícolas</div>
+<h1 style="font-size:clamp(40px,5.6vw,76px);font-weight:800">Conciliá tus operaciones agrícolas</h1>
+<p class="lead">Conectá las distintas fuentes de información de tus labores, detectá diferencias y obtené un registro conciliado de cada operación.</p>
+<p class="mono" style="font-size:14px;color:#4E5A52">Orden de trabajo · Contratista · Maquinaria · GPS · Telemetría · Sistemas de gestión</p>
+<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+<button type="button" class="btn" data-go="11">Contanos tu problemática</button>
+<button type="button" class="btn btn-ghost" data-go="5">Ver un ejemplo</button>
+</div>
+<p style="font-size:15px;color:#4E5A52">Concigra es una plataforma independiente para la conciliación de operaciones agrícolas.</p>
+</div>
+<div class="card" style="padding:24px;box-shadow:0 30px 60px -30px #16211B40">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+<span class="mono" style="font-size:13px;color:#4E5A52">OT #1542 · Cosecha de soja</span>
+<span class="pill" style="background:#FBEBD0;color:#8A5200"><span class="dot" style="background:#C98200"></span>Diferencia</span>
+</div>
+<div class="row"><span>Orden de trabajo</span><span class="mono">500,0 ha</span></div>
+<div class="row"><span>Contratista</span><span class="mono">500,0 ha</span></div>
+<div class="row"><span>Máquina</span><span class="mono amber">493,6 ha</span></div>
+<div class="row" style="border-bottom:0"><span>GPS</span><span class="mono amber">493,7 ha</span></div>
+<div style="margin-top:14px;padding:16px;border-radius:12px;background:#E5F0E9;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+<span style="display:flex;align-items:center;gap:10px;font-weight:600" class="green"><span class="dot" style="background:#1F6B45"></span>Registro conciliado</span>
+<span class="mono" style="font-weight:600">500 ha · USD 22.500</span>
+</div>
+</div>
+</div>
+<p style="font-family:Archivo,sans-serif;font-weight:700;font-size:clamp(20px,2.2vw,28px);border-top:1.5px solid #16211B;padding-top:20px">Una operación. Múltiples fuentes. Un registro conciliado.</p>
+</div>
+</section>
+</div>
+
+<!-- 2. PROBLEMA -->
+<div class="screen" data-i="1" hidden>
+<section class="view" style="background:#EDEAE1">
+<div class="wrap" style="display:flex;flex-direction:column;gap:32px">
+<div class="eyebrow">El problema</div>
+<h2 class="h2">Cuando distintas fuentes dicen cosas diferentes, ¿qué dato vale?</h2>
+<p class="lead">Una misma labor puede tener diferentes registros.</p>
+<div class="grid4">
+<div class="card" style="padding:22px"><p style="font-size:15px;color:#4E5A52">Orden de trabajo</p><p class="mono" style="font-size:clamp(28px,3vw,36px);font-weight:600;margin-top:6px">500 <span style="font-size:18px">ha</span></p></div>
+<div class="card" style="padding:22px"><p style="font-size:15px;color:#4E5A52">Contratista</p><p class="mono" style="font-size:clamp(28px,3vw,36px);font-weight:600;margin-top:6px">500 <span style="font-size:18px">ha</span></p></div>
+<div class="card" style="padding:22px;border-color:#E4B970"><p style="font-size:15px;color:#4E5A52">Máquina</p><p class="mono amber" style="font-size:clamp(28px,3vw,36px);font-weight:600;margin-top:6px">493,6 <span style="font-size:18px">ha</span></p></div>
+<div class="card" style="padding:22px;border-color:#E4B970"><p style="font-size:15px;color:#4E5A52">GPS</p><p class="mono amber" style="font-size:clamp(28px,3vw,36px);font-weight:600;margin-top:6px">493,7 <span style="font-size:18px">ha</span></p></div>
+</div>
+<div class="grid2">
+<div style="display:flex;flex-direction:column;gap:16px">
+<h3 style="font-size:clamp(22px,2.4vw,28px);font-weight:700">¿Sobre qué superficie corresponde liquidar?</h3>
+<p style="color:#3C4840">Cuando los registros no coinciden, aparecen:</p>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<span class="pill" style="background:#fff;border:1px solid #DDD9CE;font-weight:500">Revisiones manuales</span>
+<span class="pill" style="background:#fff;border:1px solid #DDD9CE;font-weight:500">Planillas</span>
+<span class="pill" style="background:#fff;border:1px solid #DDD9CE;font-weight:500">Llamadas y mensajes</span>
+<span class="pill" style="background:#fff;border:1px solid #DDD9CE;font-weight:500">Discusiones entre las partes</span>
+<span class="pill" style="background:#fff;border:1px solid #DDD9CE;font-weight:500">Pérdida de tiempo</span>
+<span class="pill" style="background:#fff;border:1px solid #DDD9CE;font-weight:500">Incertidumbre al liquidar</span>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<p style="font-size:clamp(18px,1.8vw,22px);color:#4E5A52">El problema no es tener diferentes fuentes.</p>
+<p style="font-family:Archivo,sans-serif;font-size:clamp(22px,2.4vw,28px);font-weight:700;line-height:1.2">El problema es no tener una forma simple y trazable de conciliarlas.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- 3. CONSECUENCIA -->
+<div class="screen" data-i="2" hidden>
+<section class="view">
+<div class="wrap grid2" style="align-items:center">
+<div style="display:flex;flex-direction:column;gap:20px">
+<div class="eyebrow">El costo</div>
+<h2 class="h2">Una diferencia de hectáreas también puede ser una diferencia económica</h2>
+<div class="card" style="padding:24px;margin-top:4px">
+<div class="row"><span style="color:#4E5A52">Superficie planificada</span><span class="mono">500 ha</span></div>
+<div class="row"><span style="color:#4E5A52">Superficie registrada</span><span class="mono">493,6 ha</span></div>
+<div class="row"><span style="color:#4E5A52">Precio acordado</span><span class="mono">USD 45/ha</span></div>
+<div style="padding-top:16px">
+<p style="font-size:14px;color:#4E5A52">Diferencia</p>
+<p class="mono" style="font-size:clamp(24px,3vw,36px);font-weight:600;margin-top:4px">6,4 ha × USD 45 = <span class="amber">USD 288</span></p>
+</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:clamp(19px,1.8vw,22px);font-weight:600">Pero el problema no termina en los USD 288.</p>
+<p style="color:#3C4840">También hay que determinar:</p>
+<ol style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;border-top:1px solid #DDD9CE">
+<li class="row" style="padding:10px 0">¿Cuál dato es correcto?</li>
+<li class="row" style="padding:10px 0">¿Por qué existe la diferencia?</li>
+<li class="row" style="padding:10px 0">¿Quién debe justificarla?</li>
+<li class="row" style="padding:10px 0">¿Qué evidencia existe?</li>
+<li class="row" style="padding:10px 0">¿Quién toma la decisión?</li>
+<li class="row" style="padding:10px 0">¿Cómo queda registrado?</li>
+<li class="row" style="padding:10px 0">¿Qué superficie termina liquidándose?</li>
+</ol>
+<p style="font-family:Archivo,sans-serif;font-size:clamp(21px,2.2vw,26px);font-weight:700" class="green">Concigra existe para resolver ese proceso.</p>
+</div>
+</div>
+</section>
+</div>
+
+<!-- 4. SOLUCIÓN -->
+<div class="screen" data-i="3" hidden>
+<section class="view" style="background:#EDEAE1">
+<div class="wrap grid2" style="align-items:center">
+<div style="display:flex;flex-direction:column;gap:22px">
+<div class="eyebrow">La solución</div>
+<h2 class="h2">Una capa de conciliación para tus operaciones agrícolas</h2>
+<p class="lead">Concigra reúne la información relacionada con una misma operación y permite comparar las distintas fuentes.</p>
+</div>
+<div style="display:flex;flex-direction:column">
+<div class="flowstep"><span class="mono" style="font-size:13px;color:#4E5A52;text-transform:uppercase">Planificado</span><span style="font-weight:600">Orden de trabajo</span></div>
+<div class="arrow"></div>
+<div class="flowstep"><span class="mono" style="font-size:13px;color:#4E5A52;text-transform:uppercase">Declarado</span><span style="font-weight:600">Contratista</span></div>
+<div class="arrow"></div>
+<div class="flowstep"><span class="mono" style="font-size:13px;color:#4E5A52;text-transform:uppercase">Ejecutado</span><span style="font-weight:600">Maquinaria / GPS / telemetría</span></div>
+<div class="arrow"></div>
+<div class="flowstep" style="background:#16211B;color:#F1EFE8;border-color:#16211B"><span class="mono" style="font-size:13px;color:#A9D3B9;text-transform:uppercase">Concigra</span><span style="font-weight:600">Comparación + diferencias + evidencia + resolución</span></div>
+<div class="arrow"></div>
+<div class="flowstep" style="background:#E5F0E9;border-color:#B7D5C2"><span class="mono green" style="font-size:13px;text-transform:uppercase">Conciliado</span><span style="font-weight:600">Registro final de la operación</span></div>
+<div class="arrow"></div>
+<div class="flowstep"><span class="mono" style="font-size:13px;color:#4E5A52;text-transform:uppercase">Liquidación</span><span style="font-weight:600">Superficie e importe correspondiente</span></div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- 5. CÓMO FUNCIONA -->
+<div class="screen" data-i="4" hidden>
+<section class="view">
+<div class="wrap" style="display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:18px">
+<div class="eyebrow">Cómo funciona</div>
+<h2 class="h2">De múltiples registros a una operación conciliada</h2>
+</div>
+<div class="grid4">
+<div class="card span2" style="padding:22px;display:flex;flex-direction:column;gap:8px"><span class="mono green" style="font-size:14px">01</span><h3 style="font-size:20px">Creá la operación</h3><p style="color:#3C4840;font-size:16px">Definí campo, lote, labor, superficie, contratista y precio acordado.</p></div>
+<div class="card span2" style="padding:22px;display:flex;flex-direction:column;gap:8px"><span class="mono green" style="font-size:14px">02</span><h3 style="font-size:20px">Incorporá la información</h3><p style="color:#3C4840;font-size:16px">Desde contratistas, maquinaria, GPS, telemetría, sistemas de gestión y otras fuentes.</p></div>
+<div class="card" style="padding:22px;display:flex;flex-direction:column;gap:8px"><span class="mono green" style="font-size:14px">03</span><h3 style="font-size:20px">Compará</h3><p style="color:#3C4840;font-size:16px">Concigra relaciona los registros de una misma operación.</p></div>
+<div class="card" style="padding:22px;display:flex;flex-direction:column;gap:8px"><span class="mono green" style="font-size:14px">04</span><h3 style="font-size:20px">Detectá diferencias</h3><p style="color:#3C4840;font-size:16px">Cuando las fuentes no coinciden, Concigra identifica la discrepancia.</p></div>
+<div class="card" style="padding:22px;display:flex;flex-direction:column;gap:8px"><span class="mono green" style="font-size:14px">05</span><h3 style="font-size:20px">Resolvé</h3><p style="color:#3C4840;font-size:16px">Las partes aportan información y evidencia para explicar la diferencia.</p></div>
+<div class="card" style="padding:22px;display:flex;flex-direction:column;gap:8px"><span class="mono green" style="font-size:14px">06</span><h3 style="font-size:20px">Conciliá</h3><p style="color:#3C4840;font-size:16px">La operación queda registrada con su resultado conciliado.</p></div>
+<div class="card full" style="padding:22px;display:flex;flex-direction:column;gap:8px;background:#16211B;color:#F1EFE8;border-color:#16211B"><span class="mono" style="font-size:14px;color:#A9D3B9">07</span><h3 style="font-size:20px">Liquidá</h3><p style="color:#C7D0C9;font-size:16px">El resultado conciliado puede utilizarse como base para determinar la superficie y el importe correspondiente.</p></div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- 6. EJEMPLO -->
+<div class="screen" data-i="5" hidden>
+<section class="view dark">
+<div class="wrap" style="display:flex;flex-direction:column;gap:28px">
+<div style="display:flex;flex-direction:column;gap:18px">
+<div class="eyebrow">Ejemplo</div>
+<h2 class="h2">Veamos una operación real</h2>
+</div>
+<div style="background:#F6F4EE;color:#16211B;border-radius:18px;overflow:hidden;box-shadow:0 40px 80px -30px #000">
+<div style="display:flex;align-items:center;gap:8px;padding:12px 18px;background:#E2DED3;border-bottom:1px solid #CFCBBF">
+<span class="dot" style="background:#C9C4B6"></span><span class="dot" style="background:#C9C4B6"></span><span class="dot" style="background:#C9C4B6"></span>
+<span class="mono" style="font-size:12px;color:#4E5A52;margin-left:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">concigra · Operaciones / OT #1542</span>
+</div>
+<div style="display:flex;flex-wrap:wrap">
+<aside style="flex:1 1 260px;padding:24px;border-right:1px solid #DDD9CE;display:flex;flex-direction:column;gap:16px;background:#FBFAF6">
+<div>
+<p class="mono" style="font-size:12px;color:#4E5A52">ORDEN DE TRABAJO</p>
+<p style="font-family:Archivo,sans-serif;font-size:28px;font-weight:800">OT #1542</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:15px">
+<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:#4E5A52">Labor</span><span style="font-weight:600">Cosecha de soja</span></div>
+<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:#4E5A52">Campo</span><span style="font-weight:600">El Ombú</span></div>
+<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:#4E5A52">Lote</span><span style="font-weight:600">7</span></div>
+<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:#4E5A52">Contratista</span><span style="font-weight:600">Juan Pérez</span></div>
+<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:#4E5A52">Precio</span><span style="font-weight:600" class="mono">USD 45/ha</span></div>
+</div>
+<div style="margin-top:auto;display:flex;flex-direction:column;gap:6px;font-size:14px">
+<p class="mono" style="font-size:12px;color:#4E5A52">ESTADO</p>
+<div style="display:flex;align-items:center;gap:10px"><span class="dot" style="background:#1F6B45"></span>Fuentes recibidas (4)</div>
+<div style="display:flex;align-items:center;gap:10px"><span class="dot" style="background:#C98200"></span>Diferencia detectada</div>
+<div style="display:flex;align-items:center;gap:10px"><span class="dot" style="background:#1F6B45"></span>Resuelta y conciliada</div>
+</div>
+</aside>
+<div style="flex:999 1 520px;min-width:0;padding:24px;display:flex;flex-direction:column;gap:18px">
+<div>
+<p class="mono" style="font-size:12px;color:#4E5A52;margin-bottom:8px">FUENTES</p>
+<div style="overflow-x:auto;border:1px solid #DDD9CE;border-radius:12px;background:#fff">
+<table style="width:100%;border-collapse:collapse;font-size:15px;min-width:360px">
+<thead><tr style="text-align:left;color:#4E5A52;font-size:13px"><th style="padding:10px 14px;font-weight:600">Fuente</th><th style="padding:10px 14px;font-weight:600;text-align:right">Superficie</th><th style="padding:10px 14px;font-weight:600;text-align:right">Δ vs. OT</th></tr></thead>
+<tbody>
+<tr style="border-top:1px solid #ECE9E1"><td style="padding:10px 14px">Orden de trabajo</td><td class="mono" style="padding:10px 14px;text-align:right">500,0 ha</td><td class="mono" style="padding:10px 14px;text-align:right;color:#4E5A52">—</td></tr>
+<tr style="border-top:1px solid #ECE9E1"><td style="padding:10px 14px">Contratista</td><td class="mono" style="padding:10px 14px;text-align:right">500,0 ha</td><td class="mono" style="padding:10px 14px;text-align:right;color:#4E5A52">0,0</td></tr>
+<tr style="border-top:1px solid #ECE9E1;background:#FDF5E6"><td style="padding:10px 14px">Máquina</td><td class="mono amber" style="padding:10px 14px;text-align:right">493,6 ha</td><td class="mono amber" style="padding:10px 14px;text-align:right">−6,4</td></tr>
+<tr style="border-top:1px solid #ECE9E1;background:#FDF5E6"><td style="padding:10px 14px">GPS</td><td class="mono amber" style="padding:10px 14px;text-align:right">493,7 ha</td><td class="mono amber" style="padding:10px 14px;text-align:right">−6,3</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+<div style="border:1px solid #E4B970;background:#FDF5E6;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:6px">
+<span class="pill" style="background:#FBEBD0;color:#8A5200;align-self:flex-start"><span class="dot" style="background:#C98200"></span>Concigra detecta</span>
+<p style="font-weight:600">Diferencia de superficie</p>
+<p class="mono amber" style="font-size:30px;font-weight:600">6,4 ha</p>
+<p style="font-size:14px;color:#3C4840">Concigra permite revisar la información y registrar la resolución.</p>
+</div>
+<div style="border:1px solid #B7D5C2;background:#E5F0E9;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:6px">
+<span class="pill" style="background:#CFE5D7;color:#1F6B45;align-self:flex-start"><span class="dot" style="background:#1F6B45"></span>Resultado</span>
+<p style="font-weight:600">Operación conciliada</p>
+<p class="mono" style="font-size:30px;font-weight:600">500 ha</p>
+<p style="font-size:15px">Importe: <span class="mono" style="font-weight:600">USD 22.500</span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- 7. VALOR -->
+<div class="screen" data-i="6" hidden>
+<section class="view">
+<div class="wrap" style="display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:18px">
+<div class="eyebrow">Por qué Concigra</div>
+<h2 class="h2">Más control. Menos trabajo manual.</h2>
+</div>
+<div class="grid3" style="gap:0 32px;border-top:1.5px solid #16211B">
+<div style="padding:22px 0;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid #DDD9CE"><h3 style="font-size:21px">Una única visión de la operación</h3><p style="color:#3C4840">Toda la información relacionada con una labor queda vinculada.</p></div>
+<div style="padding:22px 0;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid #DDD9CE"><h3 style="font-size:21px">Diferencias visibles</h3><p style="color:#3C4840">Detectá rápidamente cuándo las fuentes no coinciden.</p></div>
+<div style="padding:22px 0;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid #DDD9CE"><h3 style="font-size:21px">Evidencia en contexto</h3><p style="color:#3C4840">Asociá información y documentación a la discrepancia correspondiente.</p></div>
+<div style="padding:22px 0;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid #DDD9CE"><h3 style="font-size:21px">Resolución trazable</h3><p style="color:#3C4840">Registrá qué ocurrió, qué información se utilizó y cómo se resolvió.</p></div>
+<div style="padding:22px 0;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid #DDD9CE"><h3 style="font-size:21px">Liquidaciones más claras</h3><p style="color:#3C4840">Usá el resultado conciliado como base para determinar qué corresponde liquidar.</p></div>
+<div style="padding:22px 0;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid #DDD9CE"><h3 style="font-size:21px">Neutralidad</h3><p style="color:#3C4840">Una capa independiente entre los diferentes actores y sistemas.</p></div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- 8. INTEROPERABILIDAD -->
+<div class="screen" data-i="7" hidden>
+<section class="view" style="background:#EDEAE1">
+<div class="wrap grid2" style="align-items:center">
+<div style="display:flex;flex-direction:column;gap:18px">
+<div class="eyebrow">Interoperabilidad</div>
+<h2 class="h2">Concigra no reemplaza tus sistemas</h2>
+<p class="lead">Tus operaciones ya utilizan ERP, sistemas de gestión agrícola, plataformas de maquinaria, GPS, telemetría, software de contratistas y planillas.</p>
+<p style="font-size:clamp(19px,1.8vw,22px);font-weight:600">Concigra los conecta alrededor de una misma operación.</p>
+<p style="color:#3C4840">La propuesta no es obligarte a reemplazar las herramientas que ya utilizás. <strong style="color:#16211B">Es agregar una capa que permita comparar y conciliar la información que generan.</strong></p>
+</div>
+<div style="display:flex;flex-direction:column;align-items:center">
+<div class="g2m" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%">
+<div class="card mono" style="padding:14px 8px;text-align:center;font-size:14px">ERP</div>
+<div class="card mono" style="padding:14px 8px;text-align:center;font-size:14px">Maquinaria</div>
+<div class="card mono" style="padding:14px 8px;text-align:center;font-size:14px">GPS</div>
+<div class="card mono" style="padding:14px 8px;text-align:center;font-size:14px">Telemetría</div>
+<div class="card mono" style="padding:14px 8px;text-align:center;font-size:14px">Contratista</div>
+<div class="card mono" style="padding:14px 8px;text-align:center;font-size:14px">Otros sistemas</div>
+</div>
+<div style="width:2px;height:32px;background:#16211B"></div>
+<div style="width:100%;padding:22px;border-radius:16px;background:#16211B;color:#F1EFE8;text-align:center">
+<p style="font-family:Archivo,sans-serif;font-weight:800;font-size:26px;letter-spacing:.04em">CONCIGRA</p>
+<p class="mono" style="font-size:13px;color:#A9B5AC;margin-top:4px">comparación · diferencias · evidencia · resolución</p>
+</div>
+<div style="width:2px;height:32px;background:#16211B"></div>
+<div style="padding:14px 24px;border-radius:999px;background:#E5F0E9;border:1px solid #B7D5C2;display:flex;align-items:center;gap:10px;font-weight:600" class="green"><span class="dot" style="background:#1F6B45"></span>Operación conciliada</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- 9. PARA QUIÉN -->
+<div class="screen" data-i="8" hidden>
+<section class="view">
+<div class="wrap" style="display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:18px">
+<div class="eyebrow">Para quién</div>
+<h2 class="h2">Pensado para operaciones que trabajan con múltiples fuentes de información</h2>
+</div>
+<div class="grid3">
+<div class="card" style="padding:22px;display:flex;flex-direction:column;gap:8px"><h3 style="font-size:20px">Empresas agropecuarias</h3><p style="color:#3C4840">Controlá las labores realizadas por contratistas.</p></div>
+<div class="card" style="padding:22px;display:flex;flex-direction:column;gap:8px"><h3 style="font-size:20px">Productores</h3><p style="color:#3C4840">Obtené mayor trazabilidad sobre las operaciones tercerizadas.</p></div>
+<div class="card" style="padding:22px;display:flex;flex-direction:column;gap:8px"><h3 style="font-size:20px">Administradores agrícolas</h3><p style="color:#3C4840">Reducí el trabajo manual de comparación y seguimiento.</p></div>
+<div class="card" style="padding:22px;display:flex;flex-direction:column;gap:8px"><h3 style="font-size:20px">Contratistas</h3><p style="color:#3C4840">Declarás el trabajo realizado y podés aportar evidencia ante una diferencia.</p></div>
+<div class="card span2" style="padding:22px;display:flex;flex-direction:column;gap:8px"><h3 style="font-size:20px">Equipos de agricultura de precisión</h3><p style="color:#3C4840">Integrá los datos de maquinaria y telemetría con el resto de la operación.</p></div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- 10. RESULTADO -->
+<div class="screen" data-i="9" hidden>
+<section class="view dark">
+<div class="wrap" style="display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:18px">
+<div class="eyebrow">El resultado</div>
+<h2 class="h2">De datos dispersos a una decisión clara</h2>
+</div>
+<div class="grid2" style="gap:24px">
+<div style="border:1px solid #33433A;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px">
+<p class="mono" style="font-size:13px;color:#A9B5AC">ANTES</p>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+<div style="padding:12px;border-radius:10px;background:#1F2C25"><p style="font-size:13px;color:#A9B5AC">OT</p><p class="mono" style="font-size:19px">500 ha</p></div>
+<div style="padding:12px;border-radius:10px;background:#1F2C25"><p style="font-size:13px;color:#A9B5AC">Contratista</p><p class="mono" style="font-size:19px">500 ha</p></div>
+<div style="padding:12px;border-radius:10px;background:#1F2C25"><p style="font-size:13px;color:#A9B5AC">Máquina</p><p class="mono" style="font-size:19px;color:#F2B85C">493,6 ha</p></div>
+<div style="padding:12px;border-radius:10px;background:#1F2C25"><p style="font-size:13px;color:#A9B5AC">GPS</p><p class="mono" style="font-size:19px;color:#F2B85C">493,7 ha</p></div>
+</div>
+<p style="font-family:Archivo,sans-serif;font-size:24px;font-weight:700;margin-top:6px">¿Quién tiene razón?</p>
+<p style="color:#C7D0C9;font-style:italic">“Tenemos varios datos y no sabemos cuál usar.”</p>
+</div>
+<div style="border:1px solid #3E7A58;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px;background:#1A2A21">
+<p class="mono" style="font-size:13px;color:#A9D3B9">DESPUÉS · CON CONCIGRA</p>
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="display:flex;align-items:center;gap:12px"><span class="mono" style="color:#A9D3B9;width:22px">1</span>Diferencia identificada</div>
+<div style="display:flex;align-items:center;gap:12px"><span class="mono" style="color:#A9D3B9;width:22px">2</span>Evidencia</div>
+<div style="display:flex;align-items:center;gap:12px"><span class="mono" style="color:#A9D3B9;width:22px">3</span>Resolución</div>
+<div style="display:flex;align-items:center;gap:12px"><span class="mono" style="color:#A9D3B9;width:22px">4</span><span style="display:flex;align-items:center;gap:8px;font-weight:600"><span class="dot" style="background:#5BC48A"></span>Operación conciliada</span></div>
+</div>
+<div style="display:flex;gap:8px 24px;flex-wrap:wrap;margin-top:6px">
+<p class="mono" style="font-size:clamp(26px,3vw,34px);font-weight:600">500 ha</p>
+<p class="mono" style="font-size:clamp(26px,3vw,34px);font-weight:600;color:#A9D3B9">USD 22.500</p>
+</div>
+<p style="color:#E3EDE6;font-style:italic">“Tenemos una operación conciliada y trazable.”</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- 11. CONFIANZA -->
+<div class="screen" data-i="10" hidden>
+<section class="view">
+<div class="wrap grid2" style="align-items:center">
+<div style="display:flex;flex-direction:column;gap:20px">
+<div class="eyebrow">Confianza</div>
+<h2 class="h2">Una plataforma independiente</h2>
+<p class="lead">Concigra funciona como una capa independiente para relacionar las diferentes fuentes de información.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:18px">
+<p style="font-weight:600">Concigra no representa a:</p>
+<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+<div class="card" style="padding:14px 16px">el productor</div>
+<div class="card" style="padding:14px 16px">el contratista</div>
+<div class="card" style="padding:14px 16px">el fabricante de maquinaria</div>
+<div class="card" style="padding:14px 16px">un sistema de gestión específico</div>
+</div>
+<div style="padding-top:8px;display:flex;flex-direction:column;gap:10px">
+<p style="font-size:clamp(17px,1.7vw,20px);color:#4E5A52">El objetivo no es decidir quién tiene razón.</p>
+<p style="font-family:Archivo,sans-serif;font-size:clamp(21px,2.2vw,26px);font-weight:700;line-height:1.2">El objetivo es facilitar que las partes puedan determinar qué ocurrió y dejarlo registrado.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- 12–14. CTA + FORMULARIO + CIERRE -->
+<div class="screen" data-i="11" hidden>
+<section class="view" style="background:#1F6B45;color:#fff;flex-direction:column;align-items:stretch;gap:48px">
+<div class="wrap grid2">
+<div class="stick" style="display:flex;flex-direction:column;gap:18px">
+<div class="eyebrow" style="color:#CFE5D7">Contacto</div>
+<h2 class="h2" style="color:#fff">¿Tenés un problema de conciliación en tus operaciones?</h2>
+<p style="font-size:clamp(17px,1.6vw,19px);color:#E3EDE6">Si utilizás diferentes sistemas, planillas, datos de maquinaria o información de contratistas y necesitás determinar qué ocurrió realmente en una operación:</p>
+<p style="font-family:Archivo,sans-serif;font-size:clamp(24px,2.6vw,30px);font-weight:700">Contanos tu problemática.</p>
+<p style="color:#E3EDE6">Contanos qué sucede en tu operación y analizaremos cómo podemos ayudarte.</p>
+</div>
+<div class="formbox" style="background:#F6F4EE;color:#16211B;border-radius:18px;padding:30px">
+<div id="sent" hidden>
+<div style="display:flex;flex-direction:column;gap:14px;padding:24px 0">
+<span class="pill" style="background:#E5F0E9;color:#1F6B45;align-self:flex-start"><span class="dot" style="background:#1F6B45"></span>Enviado</span>
+<h3 style="font-size:26px">¡Gracias! Recibimos tu consulta.</h3>
+<p style="color:#3C4840">Vamos a analizar lo que nos contaste y te contactamos a la brevedad.</p>
+</div>
+</div>
+<div id="formwrap">
+<form style="display:flex;flex-direction:column;gap:20px" id="contactForm">
+<h3 style="font-size:24px">Contanos qué necesitás resolver</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+<div class="field"><label for="f-nombre">Nombre</label><input id="f-nombre" name="nombre" type="text" required autocomplete="name"></div>
+<div class="field"><label for="f-empresa">Empresa</label><input id="f-empresa" name="empresa" type="text" autocomplete="organization"></div>
+<div class="field"><label for="f-cargo">Cargo</label><input id="f-cargo" name="cargo" type="text" autocomplete="organization-title"></div>
+<div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" required autocomplete="email"></div>
+<div class="field full"><label for="f-tel">Teléfono / WhatsApp</label><input id="f-tel" name="telefono" type="tel" autocomplete="tel"></div>
+</div>
+<fieldset class="fs"><legend>¿Cuál es tu actividad?</legend>
+<div class="chips">
+<label class="chip"><input type="radio" name="actividad" value="Productor"><span>Productor</span></label>
+<label class="chip"><input type="radio" name="actividad" value="Empresa agropecuaria"><span>Empresa agropecuaria</span></label>
+<label class="chip"><input type="radio" name="actividad" value="Administrador"><span>Administrador</span></label>
+<label class="chip"><input type="radio" name="actividad" value="Contratista"><span>Contratista</span></label>
+<label class="chip"><input type="radio" name="actividad" value="Agricultura de precisión"><span>Agricultura de precisión</span></label>
+<label class="chip"><input type="radio" name="actividad" value="Otro"><span>Otro</span></label>
+</div></fieldset>
+<fieldset class="fs"><legend>¿Qué tipo de operación querés conciliar?</legend>
+<div class="chips">
+<label class="chip"><input type="checkbox" name="operacion" value="Cosecha"><span>Cosecha</span></label>
+<label class="chip"><input type="checkbox" name="operacion" value="Siembra"><span>Siembra</span></label>
+<label class="chip"><input type="checkbox" name="operacion" value="Pulverización"><span>Pulverización</span></label>
+<label class="chip"><input type="checkbox" name="operacion" value="Fertilización"><span>Fertilización</span></label>
+<label class="chip"><input type="checkbox" name="operacion" value="Otra"><span>Otra</span></label>
+</div></fieldset>
+<fieldset class="fs"><legend>¿Cuál es tu principal problemática?</legend>
+<div class="chips">
+<label class="chip"><input type="radio" name="problema" value="Diferencias de hectáreas"><span>Diferencias de hectáreas</span></label>
+<label class="chip"><input type="radio" name="problema" value="Diferencias entre sistemas"><span>Diferencias entre sistemas</span></label>
+<label class="chip"><input type="radio" name="problema" value="Control de contratistas"><span>Control de contratistas</span></label>
+<label class="chip"><input type="radio" name="problema" value="Liquidación de labores"><span>Liquidación de labores</span></label>
+<label class="chip"><input type="radio" name="problema" value="Datos de maquinaria"><span>Datos de maquinaria</span></label>
+<label class="chip"><input type="radio" name="problema" value="GPS / telemetría"><span>GPS / telemetría</span></label>
+<label class="chip"><input type="radio" name="problema" value="Otro"><span>Otro</span></label>
+</div></fieldset>
+<div class="field"><label for="f-msg">Contanos brevemente qué sucede</label><textarea id="f-msg" name="mensaje" rows="3"></textarea></div>
+<button class="btn" type="submit" style="align-self:flex-start">Contactar a Concigra</button>
+</form>
+</div>
+</div>
+</div>
+<div class="wrap" style="border-top:1px solid #FFFFFF40;padding-top:28px;display:flex;flex-direction:column;gap:20px">
+<p style="font-family:Archivo,sans-serif;font-weight:800;font-size:clamp(26px,3.6vw,44px);line-height:1.05;letter-spacing:-0.02em;max-width:900px">Una operación. Múltiples fuentes. Un registro conciliado.</p>
+<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
+<div>
+<p style="font-family:Archivo,sans-serif;font-weight:800;font-size:20px">Concigra</p>
+<p style="color:#CFE5D7;font-size:15px">Plataforma de conciliación de operaciones agrícolas.</p>
+</div>
+<div style="display:flex;gap:20px;align-items:center">
+<a href="#" style="color:#fff">LinkedIn</a>
+<a href="mailto:[EMAIL DE CONTACTO]" style="color:#fff">Contacto</a>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+</main>
+
+<!-- BARRA INFERIOR: anterior / siguiente -->
+<div style="position:sticky;bottom:0;z-index:5;background:#F6F4EEf2;backdrop-filter:blur(8px);border-top:1px solid #E2DED3">
+<div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:12px;height:66px">
+<button type="button" class="btn btn-ghost" id="prev" disabled aria-label="Sección anterior" style="min-height:44px;padding:0 16px;font-size:15px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span class="navlabel">Anterior</span>
+</button>
+<div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:0;max-width:420px">
+<p class="mono" style="font-size:13px;color:#4E5A52;white-space:nowrap"><span id="counter">01 / 12</span> · <span id="curLabel">Inicio</span></p>
+<div style="width:100%;height:4px;border-radius:4px;background:#E2DED3;overflow:hidden" aria-hidden="true"><div style="height:100%;background:#1F6B45;border-radius:4px;width:8%;transition:width .3s ease" id="bar"></div></div>
+</div>
+<button type="button" class="btn" id="next" aria-label="Sección siguiente" style="min-height:44px;padding:0 16px;font-size:15px">
+<span class="navlabel">Siguiente</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+</button>
+</div>
+</div>
+
+</div>
+<script>
+// Endpoint para recibir el formulario (Formspree, Getform, backend propio, etc.).
+// Si queda vacío, el formulario solo muestra el mensaje de agradecimiento.
+var FORM_ENDPOINT = '';
+
+(function () {
+  var labels = ['Inicio', 'Problema', 'Costo', 'Solución', 'Cómo funciona', 'Ejemplo', 'Valor', 'Integraciones', 'Para quién', 'Resultado', 'Confianza', 'Contacto'];
+  var slugs = ['inicio', 'problema', 'costo', 'solucion', 'como-funciona', 'ejemplo', 'valor', 'integraciones', 'para-quien', 'resultado', 'confianza', 'contacto'];
+  var total = labels.length;
+  var cur = 0;
+  var screens = document.querySelectorAll('.screen');
+  var tabsEl = document.getElementById('tabs');
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+
+  var tabs = labels.map(function (l, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tab';
+    b.innerHTML = '<span class="n">' + pad(i + 1) + '</span>' + l;
+    b.addEventListener('click', function () { go(i); });
+    tabsEl.appendChild(b);
+    return b;
+  });
+
+  function render() {
+    screens.forEach(function (s) { s.hidden = Number(s.dataset.i) !== cur; });
+    tabs.forEach(function (t, i) {
+      t.className = i === cur ? 'tab on' : 'tab';
+      if (i === cur) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');
+    });
+    tabs[cur].scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    document.getElementById('counter').textContent = pad(cur + 1) + ' / ' + pad(total);
+    document.getElementById('curLabel').textContent = labels[cur];
+    document.getElementById('bar').style.width = Math.round(((cur + 1) / total) * 100) + '%';
+    document.getElementById('prev').disabled = cur === 0;
+    document.getElementById('next').disabled = cur === total - 1;
+    document.title = (cur === 0 ? '' : labels[cur] + ' · ') + 'Concigra — Conciliación de operaciones agrícolas';
+  }
+
+  function go(i, fromHash) {
+    if (i < 0 || i >= total) return;
+    cur = i;
+    render();
+    if (!fromHash && location.hash !== '#' + slugs[i]) history.pushState(null, '', '#' + slugs[i]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function fromHash() {
+    var i = slugs.indexOf(location.hash.replace('#', ''));
+    go(i >= 0 ? i : 0, true);
+  }
+
+  document.getElementById('prev').addEventListener('click', function () { go(cur - 1); });
+  document.getElementById('next').addEventListener('click', function () { go(cur + 1); });
+  document.querySelectorAll('[data-go]').forEach(function (el) {
+    el.addEventListener('click', function () { go(Number(el.dataset.go)); });
+  });
+
+  // Flechas del teclado (fuera de campos de formulario)
+  document.addEventListener('keydown', function (e) {
+    var t = e.target.tagName;
+    if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT') return;
+    if (e.key === 'ArrowRight') go(cur + 1);
+    if (e.key === 'ArrowLeft') go(cur - 1);
+  });
+
+  // Swipe en celular
+  var sx = null, sy = null;
+  document.querySelector('main').addEventListener('touchstart', function (e) {
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+  }, { passive: true });
+  document.querySelector('main').addEventListener('touchend', function (e) {
+    if (sx === null) return;
+    var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5 && !e.target.closest('form, table, .tabs')) go(cur + (dx < 0 ? 1 : -1));
+    sx = sy = null;
+  }, { passive: true });
+
+  window.addEventListener('popstate', fromHash);
+
+  // Formulario
+  var form = document.getElementById('contactForm');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = form.querySelector('button[type="submit"]');
+    var done = function () {
+      document.getElementById('formwrap').hidden = true;
+      document.getElementById('sent').hidden = false;
+    };
+    if (!FORM_ENDPOINT) { done(); return; }
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+    fetch(FORM_ENDPOINT, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
+      .then(function (r) { if (!r.ok) throw new Error(); done(); })
+      .catch(function () {
+        btn.disabled = false;
+        btn.textContent = 'Contactar a Concigra';
+        alert('No pudimos enviar el formulario. Probá de nuevo en unos minutos.');
+      });
+  });
+
+  fromHash();
+})();
+</script>
+</body>
+</html>
